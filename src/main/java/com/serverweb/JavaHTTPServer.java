@@ -18,10 +18,14 @@ import java.util.StringTokenizer;
 // Each Client Connection will be managed in a dedicated Thread
 public class JavaHTTPServer implements Runnable{ 
 	
-	static final File WEB_ROOT = new File(".");
-	static final String DEFAULT_FILE = "/src/main/resources/index.html";
-	static final String FILE_NOT_FOUND = "/src/main/resources/404.html";
-	static final String METHOD_NOT_SUPPORTED = "/src/main/resources/not_supported.html";
+	static final File WEB_ROOT = new File("src/main/resources/");
+	static final String DEFAULT_FILE = "index.html";
+	static final String FILE_NOT_FOUND = "404.html";
+	static final String METHOD_NOT_SUPPORTED = "not_supported.html";
+	static final String IMAGE = "rs125.jpg";
+	static final String CSS = "style.css";
+	static final String AUDIO = "audio.midi";
+
 	// port to listen connection
 	static final int PORT = 8080;
 	
@@ -183,6 +187,12 @@ public class JavaHTTPServer implements Runnable{
 	private String getContentType(String fileRequested) {
 		if (fileRequested.endsWith(".htm")  ||  fileRequested.endsWith(".html"))
 			return "text/html";
+		else if (fileRequested.endsWith(".jpg"))
+			return "text/jpg";
+		else if (fileRequested.endsWith(".css"))
+			return "text/css";	
+		else if (fileRequested.endsWith(".js"))
+			return "text/javascript";
 		else
 			return "text/plain";
 	}
