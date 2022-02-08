@@ -123,36 +123,55 @@ public class JavaHTTPServer implements Runnable {
 				int fileLength = 0;
 
 				// GET or HEAD method
-				if (fileRequested.endsWith("/")) {
+				if (fileRequested.endsWith("/")) { // richiamo il file della pagina html e restituisco index.html
 					fileRequested += DEFAULT_FILE;
 				}
-				
-				if (fileRequested.endsWith("/classe.json")) {
+
+				if (fileRequested.endsWith("/classe.json")) { // quando richiedo il file /classe.json
 					XmlMapper xmlMapper = new XmlMapper();
 
 					// read file and put contents into the string
-					String readContent = new String(Files.readAllBytes(Paths.get("src/main/java/com/serverweb/to_deserialize.xml")));
+					String readContent = new String(
+							Files.readAllBytes(Paths.get("src/main/java/com/serverweb/to_deserialize.xml")));
 
 					// deserialize from the XML into a Root object
 					root deserializedData = xmlMapper.readValue(readContent, root.class);
 
-					// transformo la classe deserialized data in file JSON classe.json
+					// transformo la classe deserialized data in una stringa JSON classe.json
 					ObjectMapper objectMapper = new ObjectMapper();
 					String jsonString = objectMapper.writeValueAsString(deserializedData);
-					
+
+					// vado a leggere lunghezza e byte della nuova stringa JSON
 					fileLength = jsonString.length();
 					fileData = jsonString.getBytes();
+				}
+				if (fileRequested.endsWith("/punti-vendita.xml")) { // quando richiedo il file /classe.json
+					ObjectMapper objectMapper = new ObjectMapper();
+
+					// leggo il file json e lo trasformo in una stringa
+					String json = new String(
+							Files.readAllBytes(Paths.get("src/main/java/com/serverweb/puntiVendita.json")));
+
+					// deserialize from the JSON into a puntiRisultati object
+					puntiVendita punti = objectMapper.readValue(json, puntiVendita.class);
+
+					// trasformo la classe punti in una stringa XML
+					XmlMapper xmlMapper = new XmlMapper();
+					String xmlString = xmlMapper.writeValueAsString(punti);
+
+					// vado a leggere lunghezza e byte della nuova stringa XML
+					fileLength = xmlString.length();
+					fileData = xmlString.getBytes();
+
 				} else {
 					File file = new File(WEB_ROOT, fileRequested);
 					fileLength = (int) file.length();
 					fileData = readFileData(file, fileLength);
 				}
 
-				String content = getContentType(fileRequested);	
-
+				String content = getContentType(fileRequested);
 
 				if (method.equals("GET")) { // GET method so we return content
-					
 
 					// send HTTP Headers
 					out.println("HTTP/1.1 200 OK");
@@ -173,7 +192,7 @@ public class JavaHTTPServer implements Runnable {
 
 			}
 
-		} catch (FileNotFoundException fnfe) {
+		} catch (FileNotFoundException fnfe) { // catch dell'errore file not found sul terminale
 			try {
 				fileNotFound(out, dataOut, fileRequested);
 			} catch (IOException ioe) {
@@ -224,12 +243,15 @@ public class JavaHTTPServer implements Runnable {
 			return "text/css";
 		else if (fileRequested.endsWith(".js"))
 			return "text/javascript";
-		else if (fileRequested.endsWith(".json"))	
+		else if (fileRequested.endsWith(".json"))
 			return "application/json";
+		else if (fileRequested.endsWith(".xml"))
+			return "application/xml";
 		else
 			return "text/plain";
 	}
 
+	// se si incontra un errore vado a caricare la pagina 404
 	private void fileNotFound(PrintWriter out, OutputStream dataOut, String fileRequested) throws IOException {
 		File file = new File(WEB_ROOT, FILE_NOT_FOUND);
 		int fileLength = (int) file.length();
