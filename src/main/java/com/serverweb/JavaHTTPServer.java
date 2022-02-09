@@ -139,7 +139,7 @@ public class JavaHTTPServer implements Runnable {
 
 					// transformo la classe deserialized data in una stringa JSON classe.json
 					ObjectMapper objectMapper = new ObjectMapper();
-					String jsonString = objectMapper.writeValueAsString(deserializedData);
+					String jsonString = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(deserializedData);
 
 					// vado a leggere lunghezza e byte della nuova stringa JSON
 					fileLength = jsonString.length();
