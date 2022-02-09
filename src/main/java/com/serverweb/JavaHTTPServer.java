@@ -145,7 +145,7 @@ public class JavaHTTPServer implements Runnable {
 					fileLength = jsonString.length();
 					fileData = jsonString.getBytes();
 				}
-				if (fileRequested.endsWith("/punti-vendita.xml")) { // quando richiedo il file /classe.json
+				else if (fileRequested.endsWith("/punti-vendita.xml")) { // quando richiedo il file /classe.json
 					ObjectMapper objectMapper = new ObjectMapper();
 
 					// leggo il file json e lo trasformo in una stringa
